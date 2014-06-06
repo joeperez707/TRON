@@ -1,12 +1,20 @@
-ffs : ffs.o tron.o
-	gcc -g -o ffs ffs.o tron.o `pkg-config fuse --libs`
+.PHONY: all
+all:   tron tags
 
-ffs.o : ffs.c params.h
-	gcc -g -Wall `pkg-config fuse --cflags` -c ffs.c
+tron : tronfs.o tron.o
+	gcc -g -Wall -Werror -Wl -o tron tronfs.o tron.o `pkg-config fuse --libs`
+
+tronfs.o : tronfs.c params.h
+	gcc -g -Wall -Werror `pkg-config fuse --cflags` -c tronfs.c
 
 tron.o : tron.c tron.h params.h
-	gcc -g -Wall `pkg-config fuse --cflags` -c tron.c
+	gcc -g -Wall -Werror `pkg-config fuse --cflags` -c tron.c
 
+.PHONY: tags
+tags:
+	ctags -Rb
+	cscope -Rb
+
+.PHONY: clean
 clean:
-	rm -f ffs *.o
-
+	rm -f tron *.o tags cscope.out
